@@ -2,7 +2,31 @@
 
 All notable changes to **Creative Tools – Electronics Inventory Manager** are documented in this file.
 
-The project follows a simple development-based versioning scheme (`X.YDev`) while the software is in active development.
+The project is currently in active development and uses a development-based versioning scheme (`X.Y-Dev`).
+
+---
+
+## [1.2Dev] – 16/12/2025 (3rd Commit of the Day)
+
+### Added
+
+* JSON-based inventory file system using a dedicated `Database/` directory.
+* `/open` command with dedicated **Open Mode**.
+* `/create` command with dedicated **Create Mode**.
+* Dynamic command prompt that reflects the active mode (default, commands, open, create, file).
+* ASCII Art logo display in `/about` command.
+
+### Improved
+
+* Refactored architecture with shared configuration and utilities in `data.py`.
+* Centralized access prompt generation via `ACCTEXT`.
+* Safer file handling with extension validation (`.json` only).
+* Automatic database folder creation on startup (if there isn't one present).
+
+### Fixed
+
+* Prompt inconsistencies across command modes.
+* File name handling when opening or creating JSON files.
 
 ---
 
@@ -10,25 +34,19 @@ The project follows a simple development-based versioning scheme (`X.YDev`) whil
 
 ### Added
 
-* Paged command list system for `/commands`.
-* New sub-command mode for command browsing with its own prompt context.
-* Navigation commands:
-
-  * `/next` – Move to the next page of commands.
-  * `/prev` – Move to the previous page of commands.
-  * `/exit` – Exit command display mode.
-* Dynamic page calculation for command lists.
+* Paginated command list system for `/commands`.
+* Commands Mode with navigation support.
+* Navigation commands: `/next`, `/prev`, `/exit`.
 
 ### Improved
 
-* Command prompt now reflects the current context (normal mode vs command display mode).
-* Overall CLI structure refactored for better readability and scalability.
-* Consistent UI separators using dynamic line length.
+* Command prompt context awareness.
+* UI consistency across pages and modes.
 
 ### Fixed
 
-* Duplicate command entries in help output.
-* Inconsistent command formatting across different views.
+* Duplicate command entries.
+* Formatting inconsistencies in command output.
 
 ---
 
@@ -39,21 +57,9 @@ The project follows a simple development-based versioning scheme (`X.YDev`) whil
 ### Added
 
 * Core CLI framework.
-* ANSI color support for improved terminal UX.
-* Basic command handling loop.
-* Initial commands:
-
-  * `/help`
-  * `/about`
-  * `/commands` (basic placeholder)
-  * `/quit`
-* Error handling for unknown commands.
-
-### Notes
-
-* This version serves as the foundational architecture for future inventory-related features.
-* No persistent data storage implemented at this stage.
-
+* ANSI color support.
+* Basic command loop and error handling.
+* Initial command set: `/help`, `/about`, `/commands`, `/quit`.
 
 ---
 
