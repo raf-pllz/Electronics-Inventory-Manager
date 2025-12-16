@@ -104,7 +104,7 @@ When launched, the application displays a welcome screen and a list of basic com
 
 * Implement actual electronics inventory storage
 * Persistent data storage (JSON)
-* Eventual move to C or C++
+* Eventual move to C or C++ (for performance improvements(
 
 ---
 
@@ -119,4 +119,4 @@ LinkedIn: [https://www.linkedin.com/in/raf-pllz/](https://www.linkedin.com/in/ra
 
 ## License
 
-This project is currently shared for educational and development purposes. Licensing terms may be defined in a future release.
+This project is currently shared for illustration and archiving purposes. Licensing terms may be defined in a future release, but until then, you are not allowed to use any part of this code/sofware.
