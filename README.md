@@ -25,8 +25,9 @@ This repository currently represents a **development preview** and serves as a f
 
   * `/help`
   * `/about`
-  * `/commands` (placeholder)
+  * `/commands`
   * `/quit`
+
 * Basic error handling for unknown commands
 * Structured and readable Python codebase
 
@@ -37,6 +38,7 @@ This repository currently represents a **development preview** and serves as a f
 ```
 .
 ├── main.py        # Main application in python
+├── data.py        # Data used by main.py
 ├── README.md      # Project documentation
 ```
 
@@ -86,11 +88,11 @@ When launched, the application displays a welcome screen and a list of basic com
   Shows software information such as version, release date, and author details.
 
 * `/commands`
-  Displays the full list of available commands (currently a placeholder).
+  Displays the full list of available commands.
 
 * `/quit`
   Exits the application.
-
+  
 ---
 
 ## Version Information
@@ -104,7 +106,7 @@ When launched, the application displays a welcome screen and a list of basic com
 
 * Implement actual electronics inventory storage
 * Persistent data storage (JSON)
-* Eventual move to C or C++ (for performance improvements(
+* Eventual move to C or C++ (for performance improvements)
 
 ---
 
