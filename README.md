@@ -76,8 +76,8 @@ When launched, the application displays a welcome screen and a list of basic com
 
 ## Version Information
 
-* **Latest Version:** 1.2Dev
-* **Release Date:** 16/12/2025
+* **Latest Version:** 1.3Dev
+* **Release Date:** 17/12/2025
 
 ---
 
