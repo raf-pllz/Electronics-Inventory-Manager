@@ -1,3 +1,5 @@
+import os
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -14,9 +16,9 @@ class bcolors:
 # Defaults
 class Info:
     CurrentPage = 1
-    folder_path = 'Database'
-    VERSION = "1.2Dev"
-    DATE = "16/12/2025 (3rd Commit Of The Day)"
+    folder_path = "./Databases"
+    VERSION = "1.3Dev"
+    DATE = "17/12/2025 (1st Commit Of The Day)"
     ACCESSNAME = "System"
     ACCESS = f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{ACCESSNAME}){bcolors.ENDC} -> "
     CurrentPage = 1
@@ -37,6 +39,10 @@ class ACCTEXT:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Open{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
         elif mode == "create":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Create{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
+        elif mode == "purge":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
+        elif mode == "filedelete":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}) -> "
         else:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}){bcolors.ENDC} -> "
 

@@ -1,12 +1,6 @@
 import os
 import json
-from data import Info, bcolors, Logo, ACCTEXT, set_filename  # Import set_filename function
-
-
-# Databases Folder Initiate
-if not os.path.exists(Info.folder_path):
-    os.makedirs(Info.folder_path)
-    print(f"'{Info.folder_path}' folder created.")
+from data import Info, bcolors, Logo, ACCTEXT, set_filename
 
 
 # List of Commands
@@ -22,7 +16,10 @@ Commands = [
     f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Open Mode\n",
 
     f"{bcolors.OKCYAN}/create{bcolors.ENDC}         | Creates a (.json) file in the Vault Directory",
-    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The create Mode\n",
+    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Create Mode\n",
+
+    f"{bcolors.OKCYAN}/purge{bcolors.ENDC}         | Remove a (.json) file from the Vault Directory",
+    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Purge Mode\n",
 ]
 
 MaxPage = (len(Commands) + 9) // 10 
@@ -31,6 +28,13 @@ MaxPage = (len(Commands) + 9) // 10
 # UI Decorations
 def LineUI():
     print("=" * 70)
+
+
+# Databases Folder Initiate
+if not os.path.exists(Info.folder_path):
+    os.makedirs(Info.folder_path)
+    LineUI()
+    print(f'{bcolors.OKGREEN}{bcolors.BOLD}Notice!{bcolors.ENDC} Performed a {bcolors.PURPLE}Database{bcolors.ENDC} vault/folder creation (as there wasn\'t any other present)')
 
 
 # Launch Process
@@ -76,12 +80,12 @@ def ComCom(CurrentPage=1):
     for i in range(start_index, end_index):
         print(f"{i + 1}. {Commands[i]}")
 
-    print(f'Page ({bcolors.BOLD}{CurrentPage}/{MaxPage}{bcolors.ENDC})')
+    print(f'Page ({bcolors.BOLD}{CurrentPage}/{MaxPage}{bcolors.ENDC})                                       {bcolors.OKCYAN}/next{bcolors.ENDC} - {bcolors.OKCYAN}/prev{bcolors.ENDC} - {bcolors.OKCYAN}/exit{bcolors.ENDC}')
     LineUI()
 
 # Open Command
 def OpenCom():
-    Info.ACCESS = ACCTEXT.get_access_text("open")  # Update ACCESS to "open" mode
+    Info.ACCESS = ACCTEXT.get_access_text("open")
 
     GetCommand()
 
@@ -89,13 +93,11 @@ def OpenCom():
 
     if os.path.exists(file_path):
         Info.FileName, FileExtension = os.path.splitext(command)
-        print(Info.FileName)
 
-        # Update Info.ACCESS dynamically after modifying Info.FileName
         set_filename(Info.FileName)
 
         if FileExtension == ".json":
-            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)  # Set ACCESS to the correct file name
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
             LineUI()
             print(f'{bcolors.OKGREEN}{bcolors.BOLD}Success!{bcolors.ENDC} your file {bcolors.PURPLE}{Info.FileName}.json{bcolors.ENDC} has been opened successfully')
             LineUI()
@@ -120,7 +122,11 @@ def OpenCom():
             Info.ACCESS = ACCTEXT.get_access_text("default")
             return
 
+        else:
+            UnkCom()
+
         GetCommand()
+
 
     Info.ACCESS = ACCTEXT.get_access_text("default")
     return
@@ -132,37 +138,131 @@ def OpenHelpCom():
     print(f'To use the {bcolors.OKCYAN}/open{bcolors.ENDC}, simply enter the {bcolors.PURPLE}Open Mode{bcolors.ENDC} and add the name of the file you want to open.')
     print(f'For Example : ')
     print(f'{bcolors.PURPLE}/open')
-
     print(f'{bcolors.PURPLE}default.json{bcolors.ENDC}')
     LineUI()
 
 
 # Create Command
+# Create Command
 def CreateCom():
-    Info.ACCESS = ACCTEXT.get_access_text("create")  # Update ACCESS to "create" mode
+    Info.ACCESS = ACCTEXT.get_access_text("create")
 
     GetCommand()
 
-    # Update Info.FileName dynamically using the entered command
+    if command == "/exit":
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
     set_filename(command)
 
     if Info.FileName.endswith(".json"):
-        Info.FileName = Info.FileName[:-5]  # Remove '.json' extension if present
+        Info.FileName = Info.FileName[:-5]
 
     file_path = os.path.join(Info.folder_path, f"{Info.FileName}.json")
 
+    if not os.path.exists(Info.folder_path):
+        try:
+            os.makedirs(Info.folder_path, exist_ok=True)
+            LineUI()
+            print(f'{bcolors.OKGREEN}Notice:{bcolors.ENDC} Created missing folder {bcolors.PURPLE}{Info.folder_path}{bcolors.ENDC}')
+        except PermissionError:
+            LineUI()
+            print(f'{bcolors.WARNING}Error: Cannot create folder {bcolors.PURPLE}{Info.folder_path}{bcolors.WARNING} due to permission issues.{bcolors.ENDC}')
+            Info.ACCESS = ACCTEXT.get_access_text("default")
+            return
+
     if os.path.exists(file_path):
-        print(bcolors.WARNING + "Error: The File You Tried To Create Already Exists" + bcolors.ENDC)
-        Info.ACCESS = ACCTEXT.get_access_text("default")  # Reset ACCESS to "default" after creating the file
+        LineUI()
+        print(f'{bcolors.WARNING}Error: The file {bcolors.PURPLE}{Info.FileName}.json{bcolors.WARNING} already exists.{bcolors.ENDC}')
+        Info.ACCESS = ACCTEXT.get_access_text("default")
         return
-    else:
+
+    try:
         with open(file_path, 'w') as json_file:
             json.dump({}, json_file)
+        LineUI()
+        print(f'{bcolors.OKGREEN}{bcolors.BOLD}Success!{bcolors.ENDC} Your file {bcolors.PURPLE}{Info.FileName}.json{bcolors.ENDC} was successfully created')
+        LineUI()
+    except PermissionError:
+        LineUI()
+        print(f'{bcolors.WARNING}Error: Cannot create file {bcolors.PURPLE}{Info.FileName}.json{bcolors.WARNING} due to permission issues.{bcolors.ENDC}')
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    while True:
+        GetCommand()
+        if command == "/exit":
+            break
+        else:
+            UnkCom()
+
+    Info.ACCESS = ACCTEXT.get_access_text("default")
+
+
+# Purge Command
+def PurgeCom():
+    Info.ACCESS = ACCTEXT.get_access_text("purge")
+
+    GetCommand()
+
+    if command == "/exit":
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    set_filename(command)
+
+    file_path = os.path.join(Info.folder_path, command)
+
+    if not os.path.exists(Info.folder_path):
+        LineUI()
+        print(f'{bcolors.WARNING}Error: Database folder {bcolors.PURPLE}{Info.folder_path}{bcolors.WARNING} does not exist.{bcolors.ENDC}')
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    if not os.path.exists(file_path):
+        DirNotFound()
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    Info.FileName, FileExtension = os.path.splitext(command)
+    set_filename(Info.FileName)
+
+    if FileExtension != ".json":
+        ErrNoPerm()
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    Info.ACCESS = ACCTEXT.get_access_text("filedelete", Info.FileName)
+    VerifyCom()
+
+    GetCommand()
+    if command == "YES":
+        try:
+            os.remove(file_path)
             LineUI()
-            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Success!{bcolors.ENDC} your file {bcolors.PURPLE}{Info.FileName}.json{bcolors.ENDC} was successfully created')
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Success!{bcolors.ENDC} The file {bcolors.PURPLE}{Info.FileName}.json{bcolors.ENDC} has been deleted')
             LineUI()
 
-    Info.ACCESS = ACCTEXT.get_access_text("default")  # Reset ACCESS to "default" after creating the file
+            Info.ACCESS = ACCTEXT.get_access_text("default")
+
+            return
+        
+        except PermissionError:
+            LineUI()
+            print(f'{bcolors.WARNING}Error: Cannot delete file {bcolors.PURPLE}{Info.FileName}.json{bcolors.WARNING} due to permission issues.{bcolors.ENDC}')
+    else:
+        LineUI()
+        print(f'{bcolors.WARNING}Purge canceled.{bcolors.ENDC}')
+        LineUI()
+
+    while True:
+        GetCommand()
+        if command == "/exit":
+            break
+        else:
+            UnkCom()
+
+    Info.ACCESS = ACCTEXT.get_access_text("default")
 
 
 # Import Command Help
@@ -182,10 +282,15 @@ def GetCommand():
 
 
 # Error Handling
+def VerifyCom():
+    LineUI()
+    print(f'To purge the file {bcolors.OKCYAN}{Info.FileName}{bcolors.ENDC}, simply write {bcolors.PURPLE}{bcolors.BOLD}<YES>{bcolors.ENDC}. Writing anything else would cancel the action with an error')
+    LineUI()
+
 def UnkCom():
     LineUI()
     print(bcolors.WARNING + "Error: The Command You Provided Is Not Valid!" + bcolors.ENDC)
-    print("To Get A List Of Commands, Try: ")
+    print("To Get A List Of Valid Commands, Try: (Remember to check the mode you have entered)")
     print(bcolors.OKCYAN + "/commands" + bcolors.ENDC + "       | Displays a list of the commands available")
     LineUI()
 
@@ -223,6 +328,10 @@ def ErrMinPage():
     print(f'{bcolors.WARNING}There are not any pages left!{bcolors.ENDC}')
     LineUI()
 
+def ErrNoPerm():
+    LineUI()
+    print(f'{bcolors.WARNING}The request has been blocked (No Permission Given){bcolors.ENDC}')
+    LineUI()
 
 # Main Function
 def Main(CurrentPage):    
@@ -281,11 +390,12 @@ def Main(CurrentPage):
             OpenCom()
         elif command == "/create":
             CreateCom()
+        elif command == "/purge":
+            PurgeCom()
         else:
             UnkCom()
 
         GetCommand()
 
-# Start the main function
 if __name__ == "__main__":
     Main(Info.CurrentPage)
