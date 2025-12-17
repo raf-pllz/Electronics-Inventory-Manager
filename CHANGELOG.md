@@ -6,6 +6,22 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
+## [1.3Dev] – 17/12/2025 (1st Commit of the Day)
+
+### Added
+
+* `/purge` command with dedicated **Purge/Delete Mode**.
+
+### Improved
+
+* Error and mode handling by all the modes present (since some weird behaviour was found)
+
+### Fixed
+
+* Further Prompt inconsistencies across command modes.
+
+---
+
 ## [1.2Dev] – 16/12/2025 (3rd Commit of the Day)
 
 ### Added
