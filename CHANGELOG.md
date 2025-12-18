@@ -6,7 +6,7 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
-## [1.4Dev] – 18/12/2025
+## [1.4Dev] – 18/12/2025 (1st commit of the Day)
 
 ### Added
 - Introduced the `/purge` command for safely deleting `.json` files from the database vault.
