@@ -6,6 +6,27 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
+## [1.4Dev] – 18/12/2025
+
+### Added
+- Introduced the `/purge` command for safely deleting `.json` files from the database vault.
+- Added purge confirmation mechanism requiring explicit `YES` input before file deletion.
+- Implemented a dedicated **Purge Mode** with its own prompt context and help instructions.
+- Added contextual command access inside `/open`, `/create`, and `/purge` modes (e.g. `/commands` available while inside modes).
+- Added automatic database folder creation with user notification when missing.
+- Expanded `/about` output to include GitHub repository link.
+
+### Improved
+- Improved command list pagination logic and navigation (`/next`, `/prev`, `/exit`) with clearer UI output.
+- Improved file handling robustness with explicit permission and existence checks.
+- Standardized success, warning, and error messages for better terminal readability.
+
+
+### Fixed
+- Prevented invalid file types from being opened or purged.
+- Fixed edge cases where missing folders or permission errors could cause silent failures.
+- Improved exit handling across nested command modes to ensure clean state restoration.
+
 ## [1.3Dev] – 17/12/2025 (1st Commit of the Day)
 
 ### Added
