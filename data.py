@@ -17,8 +17,8 @@ class bcolors:
 class Info:
     CurrentPage = 1
     folder_path = "./Databases"
-    VERSION = "1.3Dev"
-    DATE = "17/12/2025 (1st Commit Of The Day)"
+    VERSION = "1.4Dev"
+    DATE = "18/12/2025 (1st Commit Of The Day)"
     ACCESSNAME = "System"
     ACCESS = f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{ACCESSNAME}){bcolors.ENDC} -> "
     CurrentPage = 1
@@ -43,9 +43,33 @@ class ACCTEXT:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
         elif mode == "filedelete":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}) -> "
+        elif mode == "mode-com":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Commands{bcolors.ENDC}) -> "
         else:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}){bcolors.ENDC} -> "
 
+
+# Commands List
+class COMMANDSLIST:
+    # List of Commands
+    Commands = [
+        f"{bcolors.OKCYAN}/about{bcolors.ENDC}          | Displays a list of information about this software",
+        f"{bcolors.OKCYAN}/commands{bcolors.ENDC}       | Displays a list of the commands available",
+        f"{bcolors.OKCYAN}|- /ANYCOMMAND{bcolors.ENDC}  | Write any command to get help on how to use it",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Commands Display Mode\n",
+
+        f"{bcolors.OKCYAN}/help{bcolors.ENDC}           | Gives a list of the most important/useful commands",
+        f"{bcolors.OKCYAN}/quit{bcolors.ENDC}           | Quits and closes the terminal window",
+        f"{bcolors.OKCYAN}/open{bcolors.ENDC}           | Opens a (.json) file in the Vault Directory",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Open Mode\n",
+
+        f"{bcolors.OKCYAN}/create{bcolors.ENDC}         | Creates a (.json) file in the Vault Directory",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Create Mode\n",
+
+        f"{bcolors.OKCYAN}/purge{bcolors.ENDC}         | Remove a (.json) file from the Vault Directory",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Purge Mode\n",
+
+]
 
 # Logo
 class Logo:

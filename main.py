@@ -1,28 +1,9 @@
 import os
 import json
-from data import Info, bcolors, Logo, ACCTEXT, set_filename
+from data import Info, bcolors, Logo, ACCTEXT, COMMANDSLIST, set_filename
 
 
-# List of Commands
-Commands = [
-    f"{bcolors.OKCYAN}/about{bcolors.ENDC}          | Displays a list of information about this software",
-    f"{bcolors.OKCYAN}/commands{bcolors.ENDC}       | Displays a list of the commands available",
-    f"{bcolors.OKCYAN}|- /ANYCOMMAND{bcolors.ENDC}  | Write any command to get help on how to use it",
-    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Commands Display Mode\n",
-
-    f"{bcolors.OKCYAN}/help{bcolors.ENDC}           | Gives a list of the most important/useful commands",
-    f"{bcolors.OKCYAN}/quit{bcolors.ENDC}           | Quits and closes the terminal window",
-    f"{bcolors.OKCYAN}/open{bcolors.ENDC}           | Opens a (.json) file in the Vault Directory",
-    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Open Mode\n",
-
-    f"{bcolors.OKCYAN}/create{bcolors.ENDC}         | Creates a (.json) file in the Vault Directory",
-    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Create Mode\n",
-
-    f"{bcolors.OKCYAN}/purge{bcolors.ENDC}         | Remove a (.json) file from the Vault Directory",
-    f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Purge Mode\n",
-]
-
-MaxPage = (len(Commands) + 9) // 10 
+MaxPage = (len(COMMANDSLIST.Commands) + 9) // 10 
 
 
 # UI Decorations
@@ -64,27 +45,67 @@ def AboutCom():
     print(f'Software Version : {bcolors.PURPLE}{Info.VERSION}{bcolors.ENDC}')
     print(f'Release Date : {bcolors.PURPLE}{Info.DATE}{bcolors.ENDC}')
     print("© 2025, Made By Rafail Palalakis, All Rights Reserved")
-    print("Built with ❤️  using Python 3")
-    print("My LinkedIn Page : https://www.linkedin.com/in/raf-pllz/")
+    print(f"Built with ❤️  using {bcolors.PURPLE}Python 3{bcolors.ENDC}")
+    print(f"My LinkedIn Page : {bcolors.OKBLUE}https://www.linkedin.com/in/raf-pllz/{bcolors.ENDC}")
+    print(f"The Project's GitHub Repository : {bcolors.OKBLUE}https://github.com/raf-pllz/Electronics-Inventory-Manager{bcolors.ENDC}")
     LineUI()
 
 
-# Command Display (Paged)
 def ComCom(CurrentPage=1):
+    while True:
+
+        ComDisplay(CurrentPage)
+
+        while True :
+            GetCommand()  # Get the user's command input
+
+            if command == "/exit":
+                return  # Exit the function if /exit is typed
+
+            elif command == "/next" and CurrentPage < MaxPage:
+                CurrentPage += 1
+                ComDisplay(CurrentPage)
+
+            elif command == "/next" and CurrentPage == MaxPage:
+                ErrMaxPage()
+
+            elif command == "/prev" and CurrentPage > 1:
+                CurrentPage -= 1
+                ComDisplay(CurrentPage)
+
+            elif command == "/prev" and CurrentPage == 1:
+                ErrMinPage()
+
+            elif command == "/open":
+                OpenHelpCom()
+
+            elif command == "/create":
+                CreateHelpCom()
+
+            elif command == "/purge":
+                PurgeHelpCom()
+
+            else:
+                UnkComCom()
+
+
+def ComDisplay(CurrentPage=1):
     LineUI()
     print(f'The Complete List Of Commands {bcolors.BOLD}(Currently Displaying 10 Elements){bcolors.ENDC}: ')
-    
+        
     start_index = (CurrentPage - 1) * 10
-    end_index = min(start_index + 10, len(Commands)) 
-    
+    end_index = min(start_index + 10, len(COMMANDSLIST.Commands)) 
+        
     for i in range(start_index, end_index):
-        print(f"{i + 1}. {Commands[i]}")
+        print(f"{i + 1}. {COMMANDSLIST.Commands[i]}")
 
     print(f'Page ({bcolors.BOLD}{CurrentPage}/{MaxPage}{bcolors.ENDC})                                       {bcolors.OKCYAN}/next{bcolors.ENDC} - {bcolors.OKCYAN}/prev{bcolors.ENDC} - {bcolors.OKCYAN}/exit{bcolors.ENDC}')
     LineUI()
 
+
+
 # Open Command
-def OpenCom():
+def OpenCom(CurrentPage):
     Info.ACCESS = ACCTEXT.get_access_text("open")
 
     GetCommand()
@@ -121,6 +142,10 @@ def OpenCom():
         if command == "/exit":
             Info.ACCESS = ACCTEXT.get_access_text("default")
             return
+        elif command == "/commands":
+            Info.ACCESS = ACCTEXT.get_access_text("mode-com", Info.FileName)
+            ComCom(CurrentPage)
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
 
         else:
             UnkCom()
@@ -132,7 +157,7 @@ def OpenCom():
     return
 
 
-# Import Command Help
+# Open Command Help
 def OpenHelpCom():
     LineUI()
     print(f'To use the {bcolors.OKCYAN}/open{bcolors.ENDC}, simply enter the {bcolors.PURPLE}Open Mode{bcolors.ENDC} and add the name of the file you want to open.')
@@ -143,8 +168,7 @@ def OpenHelpCom():
 
 
 # Create Command
-# Create Command
-def CreateCom():
+def CreateCom(CurrentPage):
     Info.ACCESS = ACCTEXT.get_access_text("create")
 
     GetCommand()
@@ -193,10 +217,27 @@ def CreateCom():
         GetCommand()
         if command == "/exit":
             break
+
+        elif command == "/commands":
+            Info.ACCESS = ACCTEXT.get_access_text("mode-com", Info.FileName)
+            ComCom(CurrentPage)
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+
         else:
             UnkCom()
 
     Info.ACCESS = ACCTEXT.get_access_text("default")
+
+
+# Create Command Help
+def CreateHelpCom():
+    LineUI()
+    print(f'To use the {bcolors.OKCYAN}/create{bcolors.ENDC}, simply enter the {bcolors.PURPLE}Create Mode{bcolors.ENDC} and add the name of the file you want to create.')
+    print(f'For Example : ')
+    print(f'{bcolors.PURPLE}/create')
+
+    print(f'{bcolors.PURPLE}default.json{bcolors.ENDC}')
+    LineUI()
 
 
 # Purge Command
@@ -266,14 +307,15 @@ def PurgeCom():
 
 
 # Import Command Help
-def CreateHelpCom():
+def PurgeHelpCom():
     LineUI()
-    print(f'To use the {bcolors.OKCYAN}/create{bcolors.ENDC}, simply enter the {bcolors.PURPLE}Create Mode{bcolors.ENDC} and add the name of the file you want to create.')
+    print(f'To use the {bcolors.OKCYAN}/purge{bcolors.ENDC}, simply enter the {bcolors.PURPLE}Purge/Delete Mode{bcolors.ENDC} and add the name of the file you want to delete.')
     print(f'For Example : ')
-    print(f'{bcolors.PURPLE}/create')
-
+    print(f'{bcolors.PURPLE}/open')
     print(f'{bcolors.PURPLE}default.json{bcolors.ENDC}')
+    print(f'And then confirm deletion by writing {bcolors.OKCYAN}YES{bcolors.ENDC} to proceed. Write {bcolors.PURPLE}/exit{bcolors.ENDC} to cancel (any wrong commands cancel the action too)')
     LineUI()
+
 
 # Frequently Accessible Functions
 def GetCommand():
@@ -352,46 +394,14 @@ def Main(CurrentPage):
             Info.ACCESS = ACCTEXT.get_access_text("commands")
             ComCom(CurrentPage)
 
-            GetCommand()
-
-            while command != "/exit":
-                
-                if command == "/next" and CurrentPage < MaxPage:
-                    CurrentPage += 1
-                    ComCom(CurrentPage)
-
-                elif command == "/next" and CurrentPage == MaxPage:
-                    ErrMaxPage()
-
-                elif command == "/prev" and CurrentPage > 1:
-                    CurrentPage -= 1
-                    ComCom(CurrentPage)
-
-                elif command == "/prev" and CurrentPage == 1:
-                    ErrMinPage()
-
-                elif command == "/open":
-                    OpenHelpCom()
-
-                elif command == "/create":
-                    CreateHelpCom()
-
-                elif command == "/exit":
-                    break 
-
-                else:
-                    UnkComCom()
-
-                GetCommand()
-
             Info.ACCESS = ACCTEXT.get_access_text("default")
 
         elif command == "/open":
-            OpenCom()
+            OpenCom(CurrentPage)
         elif command == "/create":
-            CreateCom()
+            CreateCom(CurrentPage)
         elif command == "/purge":
-            PurgeCom()
+            PurgeCom(CurrentPage)
         else:
             UnkCom()
 
