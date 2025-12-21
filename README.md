@@ -1,37 +1,74 @@
 # Creative Tools – Electronics Inventory Manager
 
-A terminal-based Electronics Inventory Manager written in Python. The project provides a structured, mode-driven Command Line Interface (CLI) with colored output, contextual prompts, and JSON-based file management, designed to scale into a full inventory system.
+A terminal-based Electronics Inventory Manager written in Python.  
+The project provides an interactive CLI for creating, opening, and managing JSON-based inventory files, with support for adding and removing electronic components through structured command modes.
+
+This repository currently represents a **development-stage build** and serves as the foundation for a more complete inventory management system.
 
 ---
 
 ## Overview
 
-Creative Tools – Electronics Inventory Manager is a development-stage CLI application that allows users to interact with electronics inventory data through dedicated command modes. The system emphasizes clarity, modularity, and extensibility, while maintaining a clean terminal user experience.
+Creative Tools – Electronics Inventory Manager is a command-driven CLI application designed to manage electronics inventory data stored in `.json` files. It emphasizes:
 
-The application currently supports JSON-based inventory files, stored in a dedicated database directory, and introduces contextual command prompts that adapt to the active mode.
+- Clear terminal UX with ANSI colors
+- Mode-based command interaction
+- Structured inventory object handling
+- Safe file and data manipulation
+- Extensible architecture for future growth
+
+The application operates entirely in the terminal and does not rely on external libraries.
 
 ---
 
 ## Features
 
-- Interactive, mode-aware terminal interface
+- Interactive command-line interface
 - ANSI-colored output and dynamic prompts
-- Automatic database folder creation
-- JSON-based inventory file handling
-- Paged command navigation system
-- Command-specific help inside command mode
-- Clear separation between logic, data, and UI helpers
+- JSON-based inventory storage
+- Automatic database (vault) folder creation
+- File-based inventory management
+- Object-level inventory manipulation
+
+### Core Capabilities
+
+- Create inventory files
+- Open existing inventory files
+- Add components to an inventory
+- Remove components by **ID** or **Name**
+- Purge inventory files safely
+- Paginated command listing with navigation
+
+---
+
+## Inventory Objects
+
+Each inventory entry (component) consists of:
+
+- **Name**
+- **Description**
+- **Stock quantity** (integer ≥ 0)
+- **Unique ID**
+
+Objects are stored as structured JSON entries and managed interactively through prompts.
 
 ---
 
 ## Project Structure
 
+
+
+## Project Structure
+
 ```
 .
-├── main.py        # Main application in python
-├── data.py        # Data used by main.py
-├── README.md      # Project documentation
-├── Database       # Software-Created folder for the .json files
+├── CLIUI.py            # Script that handles commonly used UI elements for all scripts
+├── data.py             # Data used by main.py
+├── jsonprocess.py      # Script that handles the .json file processes
+├── main.py             # Main application in python
+├── notifications.py    # Script that handles the notifications for the user
+├── README.md           # Project Read Me file
+├── CHANGELOG.md        # Project Changelog
 ```
 
 ---
@@ -76,15 +113,15 @@ When launched, the application displays a welcome screen and a list of basic com
 
 ## Version Information
 
-* **Latest Version:** 1.4Dev
-* **Release Date:** 18/12/2025
+* **Latest Version:** 1.5Dev
+* **Release Date:** 21/12/2025
 
 ---
 
 ## Roadmap (Planned)
 
-* Implement actual electronics inventory storage
-* Persistent data storage (JSON)
+* Implement actual electronics inventory storage (Work-In-Progress)
+* Persistent data storage (JSON) (Also Work-In-Progress)
 * Eventual move to C or C++ (for performance improvements)
 
 ---
