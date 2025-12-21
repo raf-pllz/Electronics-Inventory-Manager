@@ -6,6 +6,40 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
+## [1.5Dev] – 19/12/2025
+
+### Added
+- Component management inside opened inventory files:
+  - `/add` command for creating new inventory objects.
+  - `/remove` command with sub-modes for deletion by **ID** or **Name**.
+- Structured component model including:
+  - Object Name
+  - Description
+  - Stock (validated integer ≥ 0)
+  - Object ID
+- JSON write and delete operations through centralized processing utilities.
+- Confirmation step for destructive operations (file purge and object removal).
+- Success notifications for object creation and deletion.
+- File-level operational mode with context-aware prompts.
+
+### Improved
+- Input validation for numeric fields (stock values).
+- Error feedback when invalid object identifiers are provided.
+- State restoration when exiting nested modes (`/exit` handling consistency).
+- Clearer separation between command display mode, file mode, and creation/purge workflows.
+- CLI UX consistency through reusable UI helpers.
+
+### Fixed
+- Edge cases where invalid input could break command flow.
+- Multiple instances of duplicated setter calls and silent failures.
+- Incorrect handling of non-`.json` files during open and purge operations.
+
+### Notes
+- As of this version, the `/add` and `/remove` commands **do not perform duplicate checks** on existing objects.
+- Objects with identical names or IDs may be created if the user provides them.
+- This behavior is **known and intentional for the current development stage** and is planned to be improved in future versions with stricter validation and conflict handling.
+
+
 ## [1.4Dev] – 18/12/2025 (1st commit of the Day)
 
 ### Added
