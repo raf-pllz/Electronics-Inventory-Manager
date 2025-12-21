@@ -113,8 +113,10 @@ When launched, the application displays a welcome screen and a list of basic com
 
 ## Version Information
 
-* **Latest Version:** 1.5Dev
-* **Release Date:** 21/12/2025
+* **Latest Development Version:** 1.5Dev
+* * **Latest User-Ready Version:** NONE
+* **Development Version Release Date:** 21/12/2025
+* * **Development Version Release Date:** NOT YET RELEASED
 
 ---
 
