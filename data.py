@@ -1,5 +1,6 @@
 import os
-
+from dataclasses import dataclass
+    
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -17,8 +18,8 @@ class bcolors:
 class Info:
     CurrentPage = 1
     folder_path = "./Databases"
-    VERSION = "1.4Dev"
-    DATE = "18/12/2025 (1st Commit Of The Day)"
+    VERSION = "1.5Dev"
+    DATE = "21/12/2025 (1st Commit Of The Day)"
     ACCESSNAME = "System"
     ACCESS = f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{ACCESSNAME}){bcolors.ENDC} -> "
     CurrentPage = 1
@@ -39,12 +40,36 @@ class ACCTEXT:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Open{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
         elif mode == "create":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Create{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
+        
         elif mode == "purge":
-            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.FAIL}>Purge{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
         elif mode == "filedelete":
-            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}) -> "
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.FAIL}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}) -> "
+        
         elif mode == "mode-com":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Commands{bcolors.ENDC}) -> "
+        elif mode == "add-name":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Add>Name{bcolors.ENDC}) -> "
+        elif mode == "add-desc":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Add>Description{bcolors.ENDC}) -> "
+        elif mode == "add-stock":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Add>Stock{bcolors.ENDC}) -> "
+        elif mode == "add-id":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Add>ID{bcolors.ENDC}) -> "
+        
+        # Mode : Remove/Delete Object From .json File
+        elif mode == "remove":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.FAIL}>Remove{bcolors.ENDC}) -> "
+        
+        # Mode : Remove/Delete Object From .json File (With ID)
+        elif mode == "remove-id":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.FAIL}>Remove>ID{bcolors.ENDC}) -> "
+        
+        # Mode : Remove/Delete Object From .json File (With NAME)
+        elif mode == "remove-name":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.FAIL}>Remove>Name{bcolors.ENDC}) -> "
+        
+        # Default Handling
         else:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}){bcolors.ENDC} -> "
 
@@ -53,21 +78,28 @@ class ACCTEXT:
 class COMMANDSLIST:
     # List of Commands
     Commands = [
-        f"{bcolors.OKCYAN}/about{bcolors.ENDC}          | Displays a list of information about this software",
-        f"{bcolors.OKCYAN}/commands{bcolors.ENDC}       | Displays a list of the commands available",
-        f"{bcolors.OKCYAN}|- /ANYCOMMAND{bcolors.ENDC}  | Write any command to get help on how to use it",
-        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Commands Display Mode\n",
+        f"{bcolors.OKCYAN}/about{bcolors.ENDC}                | Displays a list of information about this software",
+        f"{bcolors.OKCYAN}/commands{bcolors.ENDC}             | Displays a list of the commands available",
+        f"{bcolors.OKCYAN}|- /ANYCOMMAND{bcolors.ENDC}        | Write any command to get help on how to use it",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}              | Exits The Commands Display Mode\n",
 
-        f"{bcolors.OKCYAN}/help{bcolors.ENDC}           | Gives a list of the most important/useful commands",
-        f"{bcolors.OKCYAN}/quit{bcolors.ENDC}           | Quits and closes the terminal window",
-        f"{bcolors.OKCYAN}/open{bcolors.ENDC}           | Opens a (.json) file in the Vault Directory",
-        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}        | Exits The Open Mode\n",
+        f"{bcolors.OKCYAN}/help{bcolors.ENDC}                 | Gives a list of the most important/useful commands",
+        f"{bcolors.OKCYAN}/quit{bcolors.ENDC}                 | Quits and closes the terminal window",
+        f"{bcolors.OKCYAN}/open{bcolors.ENDC}                 | Opens a (.json) file in the Vault Directory",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}              | Exits The Open Mode\n",
 
-        f"{bcolors.OKCYAN}/create{bcolors.ENDC}         | Creates a (.json) file in the Vault Directory",
-        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Create Mode\n",
+        f"{bcolors.OKCYAN}/create{bcolors.ENDC}               | Creates a (.json) file in the Vault Directory",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}             | Exits The Create Mode\n",
 
-        f"{bcolors.OKCYAN}/purge{bcolors.ENDC}         | Remove a (.json) file from the Vault Directory",
-        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}       | Exits The Purge Mode\n",
+        f"{bcolors.OKCYAN}/purge{bcolors.ENDC}               | Remove a (.json) file from the Vault Directory",
+        f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}             | Exits The Purge Mode\n",
+
+        f"{bcolors.OKCYAN}ANYFILE{bcolors.ENDC}              | When being in any file",
+        f"{bcolors.OKCYAN}|- /add{bcolors.ENDC}              | Add An Object To The Current (.json) File",
+        f"{bcolors.OKCYAN}|- /remove{bcolors.ENDC}           | Remove An Object To The Current (.json) File",
+        f"{bcolors.OKCYAN}|- /commands{bcolors.ENDC}           | Displays a list of the commands available",
+        f"{bcolors.OKCYAN}|-- /ANYCOMMAND{bcolors.ENDC}        | Write any command to get help on how to use it",
+        f"{bcolors.OKCYAN}|-- /exit{bcolors.ENDC}              | Exits The Commands Display Mode\n",
 
 ]
 
@@ -91,8 +123,48 @@ class Logo:
     ]
 
 
+@dataclass
+class Component:
+    name: str
+    description: str
+    stock: int
+    id : int
+
+
+# Function to set ObjName
+def set_ObjName(comp: Component, ObjName):
+    comp.name = ObjName
+
+
+# Function to set ObjDescription
+def set_ObjDescription(comp: Component, ObjDescription):
+    comp.description = ObjDescription
+
+
+# Function to set ObjStock
+def set_ObjStock(comp : Component, ObjStock):
+    comp.stock = ObjStock
+
+
+# Function to set ObjStock
+def set_ObjID(comp : Component, ObjID):
+    comp.id = ObjID
+
+
+def component_to_dict(comp: Component) -> dict:
+    d = {
+        "obj_name": comp.name,
+        "obj_description": comp.description,
+        "obj_stock": comp.stock,  
+        "obj_id": comp.id,
+    }
+    
+    return d
+
+
+# ======
+
 # Frequently Accessible Functions
 def set_filename(filename):
     Info.FileName = filename
-    # Update ACCESS dynamically after changing the filename
     Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)

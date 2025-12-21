@@ -1,14 +1,13 @@
 import os
 import json
-from data import Info, bcolors, Logo, ACCTEXT, COMMANDSLIST, set_filename
+
+from data import Info, bcolors, Logo, ACCTEXT, COMMANDSLIST, set_filename, set_ObjName, set_ObjDescription, set_ObjStock, set_ObjID, Component, component_to_dict  
+from jsonprocess import write_json, remove_json
+from notifications import obj_add_success, obj_remove_success
+from CLIUI import LineUI
 
 
 MaxPage = (len(COMMANDSLIST.Commands) + 9) // 10 
-
-
-# UI Decorations
-def LineUI():
-    print("=" * 70)
 
 
 # Databases Folder Initiate
@@ -103,6 +102,149 @@ def ComDisplay(CurrentPage=1):
     LineUI()
 
 
+# Options When A File Is Loaded
+def FileMode(CurrentPage, file_path):
+    while True:
+
+        if command == "/exit":
+            break
+
+        elif command == "/commands":
+            Info.ACCESS = ACCTEXT.get_access_text("mode-com", Info.FileName)
+            ComCom(CurrentPage)
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+
+        elif command == "/add":
+            # Default comp
+            comp = Component('','',0,0)
+
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the name of the object you want to create : ')
+            Info.ACCESS = ACCTEXT.get_access_text("add-name", Info.FileName)
+            ObjName = input(f'{Info.ACCESS}')
+            set_ObjName(comp, ObjName)
+            if ObjName == "/exit":
+                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                break
+
+            # Set Object Description
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the description of the object {bcolors.OKGREEN}{ObjName}{bcolors.ENDC} you want to create : ')
+            Info.ACCESS = ACCTEXT.get_access_text("add-desc", Info.FileName)
+            ObjDescription = input(f'{Info.ACCESS}')
+            set_ObjDescription(comp, ObjDescription)
+            if ObjDescription == "/exit":
+                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                break
+
+            # Set Object Stock
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the stock of the object {bcolors.OKGREEN}{ObjName}{bcolors.ENDC} you want to create : ')
+            Info.ACCESS = ACCTEXT.get_access_text("add-stock", Info.FileName)
+            
+            while True:
+                try:
+                    ObjStock = int(input(f'{Info.ACCESS}'))
+                    if ObjStock < 0:
+                        ErrInvVal("Be An Integer Larger Or Equal To Zero")
+                    break
+                except ValueError as e:
+                    ErrInvVal("Be An Integer Larger Or Equal To Zero")
+
+
+            set_ObjStock(comp, ObjStock)
+            
+            if ObjStock == "/exit":
+                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                break
+
+            # Set Object ID
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the ID of the object {bcolors.OKGREEN}{ObjName}{bcolors.ENDC} you want to create : ')
+            Info.ACCESS = ACCTEXT.get_access_text("add-id", Info.FileName)
+            ObjID = input(f'{Info.ACCESS}')
+            set_ObjID(comp, ObjID)
+            if ObjID == "/exit":
+                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                break
+
+            set_ObjID(comp, ObjID)
+
+            push = component_to_dict(comp)
+
+            write_json(push, file_path)
+
+            # Successful Process Message
+            obj_add_success(ObjName, Info.FileName)
+
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+
+        # Command /remove
+        elif command == "/remove":
+            
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the way you want to identify the object you wish to {bcolors.FAIL}remove/delete{bcolors.ENDC} (either by {bcolors.PURPLE}/id{bcolors.ENDC} or {bcolors.PURPLE}/name{bcolors.ENDC}) : ')
+            Info.ACCESS = ACCTEXT.get_access_text("remove", Info.FileName)
+            GetCommand()
+
+            # Answer Checking
+            while command != "/exit" and command != "/id" and command != "/name":
+                ErrInvVal(f"Be one of the following commands: {bcolors.PURPLE}/exit || /id || /name")
+                GetCommand
+
+
+            # Exit Case    
+            if command == "/exit":
+                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                break
+            # ID Case
+            elif command == "/id":
+                search_mode = "id"
+
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}ID{bcolors.ENDC} of the object you want to {bcolors.FAIL}remove/delete{bcolors.ENDC} : ')
+                Info.ACCESS = ACCTEXT.get_access_text("remove-id", Info.FileName)
+                while True:
+                    GetCommand()
+
+                    search_key = command
+
+                    result = remove_json(file_path, search_key, search_mode)
+
+                    if result == -1:
+                        ErrInvObj(search_key)
+                        GetCommand()
+                        search_key = command
+
+                    elif result == 0:
+                        obj_remove_success(ObjName, Info.FileName)
+                        break
+
+
+            # Name Case
+            elif command == "/name":
+                search_mode = "name"
+
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}ID{bcolors.ENDC} of the object you want to {bcolors.FAIL}remove/delete{bcolors.ENDC} : ')
+                Info.ACCESS = ACCTEXT.get_access_text("remove-name", Info.FileName)
+                while True:
+                    GetCommand()
+
+                    search_key = command
+
+                    result = remove_json(file_path, search_key, search_mode)
+
+                    if result == -1:
+                        ErrInvObj(search_key)
+                        GetCommand()
+                        search_key = command
+
+                    elif result == 0:
+                        obj_remove_success(search_key, Info.FileName)
+                        break
+
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+        
+        else:
+            UnkCom()
+
+        GetCommand()
+
+    Info.ACCESS = ACCTEXT.get_access_text("file")
 
 # Open Command
 def OpenCom(CurrentPage):
@@ -138,20 +280,7 @@ def OpenCom(CurrentPage):
 
     GetCommand()
 
-    while command != "/exit":
-        if command == "/exit":
-            Info.ACCESS = ACCTEXT.get_access_text("default")
-            return
-        elif command == "/commands":
-            Info.ACCESS = ACCTEXT.get_access_text("mode-com", Info.FileName)
-            ComCom(CurrentPage)
-            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
-
-        else:
-            UnkCom()
-
-        GetCommand()
-
+    FileMode(CurrentPage, file_path)
 
     Info.ACCESS = ACCTEXT.get_access_text("default")
     return
@@ -213,18 +342,7 @@ def CreateCom(CurrentPage):
         Info.ACCESS = ACCTEXT.get_access_text("default")
         return
 
-    while True:
-        GetCommand()
-        if command == "/exit":
-            break
-
-        elif command == "/commands":
-            Info.ACCESS = ACCTEXT.get_access_text("mode-com", Info.FileName)
-            ComCom(CurrentPage)
-            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
-
-        else:
-            UnkCom()
+    FileMode(CurrentPage, file_path)
 
     Info.ACCESS = ACCTEXT.get_access_text("default")
 
@@ -323,7 +441,7 @@ def GetCommand():
     command = input(f'{Info.ACCESS}')
 
 
-# Error Handling
+# Error/Message Handling
 def VerifyCom():
     LineUI()
     print(f'To purge the file {bcolors.OKCYAN}{Info.FileName}{bcolors.ENDC}, simply write {bcolors.PURPLE}{bcolors.BOLD}<YES>{bcolors.ENDC}. Writing anything else would cancel the action with an error')
@@ -336,7 +454,6 @@ def UnkCom():
     print(bcolors.OKCYAN + "/commands" + bcolors.ENDC + "       | Displays a list of the commands available")
     LineUI()
 
-
 def UnkComCom():
     LineUI()
     print(bcolors.WARNING + "Error: The Command You Provided Is Not Valid!" + bcolors.ENDC)
@@ -346,24 +463,20 @@ def UnkComCom():
     print(bcolors.OKCYAN + "/exit" + bcolors.ENDC + "       | Exits The Commands Display Mode")
     LineUI()
 
-
 def DirNotFound():
     LineUI()
     print(f'{bcolors.WARNING}Error: The File You Provided Is Not Valid/Found. Remember to add the {bcolors.PURPLE}.json{bcolors.ENDC}{bcolors.WARNING} extension!{bcolors.ENDC}')
     LineUI()
-
 
 def WrongFile():
     LineUI()
     print(f'{bcolors.WARNING}Error: The File {bcolors.PURPLE}{Info.FileName}{bcolors.WARNING} You Provided Is Not A Valid File Type (Accepts Only .json)!{bcolors.ENDC}')
     LineUI()
 
-
 def ErrMaxPage():
     LineUI()
     print(f'{bcolors.WARNING}There are not any pages left!{bcolors.ENDC}')
     LineUI()
-
 
 def ErrMinPage():
     LineUI()
@@ -373,6 +486,16 @@ def ErrMinPage():
 def ErrNoPerm():
     LineUI()
     print(f'{bcolors.WARNING}The request has been blocked (No Permission Given){bcolors.ENDC}')
+    LineUI()
+
+def ErrInvVal(IntendedValue):
+    LineUI()
+    print(f'{bcolors.WARNING}The Value You Entered Is Wrong, it should be {bcolors.PURPLE}{IntendedValue}{bcolors.ENDC}')
+    LineUI()
+
+def ErrInvObj(search_key):
+    LineUI()
+    print(f'{bcolors.WARNING}The Value You Entered Is Wrong, there was not any file found with the ID/Name : {bcolors.PURPLE}{search_key}{bcolors.ENDC}')
     LineUI()
 
 # Main Function
@@ -401,7 +524,7 @@ def Main(CurrentPage):
         elif command == "/create":
             CreateCom(CurrentPage)
         elif command == "/purge":
-            PurgeCom(CurrentPage)
+            PurgeCom()
         else:
             UnkCom()
 
