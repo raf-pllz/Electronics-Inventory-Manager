@@ -114,9 +114,9 @@ When launched, the application displays a welcome screen and a list of basic com
 ## Version Information
 
 * **Latest Development Version:** 1.5Dev
-* * **Latest User-Ready Version:** NONE
 * **Development Version Release Date:** 21/12/2025
-* * **Development Version Release Date:** NOT YET RELEASED
+* **Latest User-Ready Version:** NONE
+* **User-Ready Version Release Date:** NOT YET RELEASED
 
 ---
 
