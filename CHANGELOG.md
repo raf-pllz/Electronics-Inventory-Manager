@@ -6,7 +6,7 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
-## [1.5Dev] – 19/12/2025
+## [1.5Dev] – 21/12/2025
 
 ### Added
 - Component management inside opened inventory files:
