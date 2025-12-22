@@ -56,10 +56,6 @@ Objects are stored as structured JSON entries and managed interactively through 
 
 ## Project Structure
 
-
-
-## Project Structure
-
 ```
 .
 ├── CLIUI.py            # Script that handles commonly used UI elements for all scripts
