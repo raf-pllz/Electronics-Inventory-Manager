@@ -6,6 +6,30 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
+
+## [1.5.1Dev] – 97/01/2026
+
+### Added
+- Introduced `/notes` command to display the latest changelog directly inside the CLI.
+- Updated command prompt tag: replaced default `"@system"` with the **actual computer username** for improved context awareness.
+- Mode-aware help guides for `/open`, `/create`, and `/purge` stored as ordered string arrays for consistent terminal output.
+
+### Improved
+- Refactored monolithic framework into modular scripts:
+  - `data.py` for shared state/constants
+  - `commands.py` for CLI command routing
+  - `notifications.py` for feedback messaging
+  - `jsonprocess.py` for JSON read/write operations
+  - `CLIUI.py` for terminal UI helpers
+- Debugging and development workflow streamlined due to clear separation of concerns.
+- Numeric validation for stock values (`integer >= 0`) implemented at input level.
+
+### Fixed
+- Resolved nested mode state reset inconsistencies when exiting with `/exit`.
+- Removed redundant setter calls and silent failures caused by previous single-file architecture.
+- Hardened rejection logic for non-`.json` files during `/open` and `/purge` operations.
+
+
 ## [1.5Dev] – 21/12/2025
 
 ### Added
