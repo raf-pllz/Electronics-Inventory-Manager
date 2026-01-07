@@ -59,6 +59,7 @@ Objects are stored as structured JSON entries and managed interactively through 
 ```
 .
 ├── CLIUI.py            # Script that handles commonly used UI elements for all scripts
+├── commands.py         # Script that handles all commands logic
 ├── data.py             # Data used by main.py
 ├── jsonprocess.py      # Script that handles the .json file processes
 ├── main.py             # Main application in python
@@ -109,8 +110,8 @@ When launched, the application displays a welcome screen and a list of basic com
 
 ## Version Information
 
-* **Latest Development Version:** 1.5Dev
-* **Development Version Release Date:** 21/12/2025
+* **Latest Development Version:** 1.5.1Dev
+* **Development Version Release Date:** 07/01/2026
 * **Latest User-Ready Version:** NONE
 * **User-Ready Version Release Date:** NOT YET RELEASED
 
@@ -127,7 +128,7 @@ When launched, the application displays a welcome screen and a list of basic com
 ## Author
 
 Developed by **Rafail Palalakis**
-© 2025 – All Rights Reserved
+© 2026 – All Rights Reserved
 
 LinkedIn: [https://www.linkedin.com/in/raf-pllz/](https://www.linkedin.com/in/raf-pllz/)
 
@@ -135,7 +136,7 @@ LinkedIn: [https://www.linkedin.com/in/raf-pllz/](https://www.linkedin.com/in/ra
 
 ## License
 
-Copyright (c) 2025 Rafail Palalakis
+Copyright (c) 2026 Rafail Palalakis
 
 All rights reserved.
 
