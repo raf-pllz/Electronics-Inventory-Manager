@@ -7,7 +7,7 @@ The project is currently in active development and uses a development-based vers
 ---
 
 
-## [1.5.1Dev] – 97/01/2026
+## [1.5.1Dev] – 07/01/2026
 
 ### Added
 - Introduced `/notes` command to display the latest changelog directly inside the CLI.
