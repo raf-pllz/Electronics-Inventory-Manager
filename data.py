@@ -1,4 +1,5 @@
-import os
+import getpass
+
 from dataclasses import dataclass
     
 class bcolors:
@@ -18,12 +19,128 @@ class bcolors:
 class Info:
     CurrentPage = 1
     folder_path = "./Databases"
-    VERSION = "1.5Dev"
-    DATE = "21/12/2025 (1st Commit Of The Day)"
-    ACCESSNAME = "System"
+    VERSION = "1.5.1Dev"
+    DATE = "07/1/2026 (1st Commit Of The Day)"
+    ACCESSNAME = getpass.getuser()
     ACCESS = f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{ACCESSNAME}){bcolors.ENDC} -> "
     CurrentPage = 1
-    FileName: int
+    FileName = "none"
+
+
+    # About Page Strings
+    AboutStrings = [
+        f'Software Version : {bcolors.PURPLE}{VERSION}{bcolors.ENDC}',
+        f'Release Date : {bcolors.PURPLE}{DATE}{bcolors.ENDC}',
+        f'© 2026, Made By Rafail Palalakis, All Rights Reserved',
+        f'Built with ❤️  using {bcolors.PURPLE}Python 3{bcolors.ENDC}',
+        f'My LinkedIn Page : {bcolors.OKBLUE}https://www.linkedin.com/in/raf-pllz/{bcolors.ENDC}',
+        f'The Project\'s GitHub Repository : {bcolors.OKBLUE}https://github.com/raf-pllz/Electronics-Inventory-Manager{bcolors.ENDC}',
+    ]
+
+
+    # Help Page Strings
+    HelpStrings = [
+        f'{bcolors.OKCYAN}/help{bcolors.ENDC}             | Gives a list of the most important/useful commands',
+        f'{bcolors.OKCYAN}/quit{bcolors.ENDC}             | Quits and closes the terminal window',
+        f'{bcolors.OKCYAN}/about{bcolors.ENDC}            | Displays a list of information about this software',
+        f'{bcolors.OKCYAN}/commands{bcolors.ENDC}         | Displays a list of the commands available'
+    ]
+
+
+    # Open Command Help Page Strings
+    OpenCommandHelpStrings = [
+        f"{bcolors.HEADER}{bcolors.BOLD}Open Command Guide{bcolors.ENDC}",
+        "",
+        f"{bcolors.OKCYAN}/open{bcolors.ENDC}  | Load an existing {bcolors.PURPLE}.json{bcolors.ENDC} inventory file from the {bcolors.OKBLUE}{bcolors.BOLD}Vault Directory{bcolors.ENDC}.",
+        "",
+        f"{bcolors.OKGREEN}{bcolors.BOLD}Usage Format:{bcolors.ENDC}",
+        f"  {bcolors.OKCYAN}/open{bcolors.ENDC}",
+        f"  {bcolors.PURPLE}filename.json{bcolors.ENDC}",
+        "",
+        f"{bcolors.WARNING}{bcolors.BOLD}Abort / Exit:{bcolors.ENDC}",
+        f"  - When prompted for a file name, type {bcolors.FAIL}/exit{bcolors.ENDC} to cancel and return to {bcolors.OKBLUE}default terminal mode{bcolors.ENDC}.",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Validation Rules:{bcolors.ENDC}",
+        f"  - Only {bcolors.PURPLE}.json{bcolors.ENDC} files are accepted.",
+        f"  - Non-JSON extensions trigger an {bcolors.FAIL}Error : Wrong File{bcolors.ENDC}.",
+        f"  - Unknown file names trigger an {bcolors.FAIL}Error : Directory Not Found{bcolors.ENDC}.",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Post-Load Capabilities:{bcolors.ENDC}",
+        f"  - Once a file is opened, inventory actions {bcolors.OKGREEN}/add{bcolors.ENDC} and {bcolors.FAIL}/remove{bcolors.ENDC} become available.",
+    ]
+
+
+    # Create Command Help Page Strings
+    CreateCommandHelpStrings = [
+        f"{bcolors.HEADER}{bcolors.BOLD}Create Command Guide{bcolors.ENDC}",
+        "",
+        f"{bcolors.OKCYAN}/create{bcolors.ENDC}  | Create a new {bcolors.PURPLE}.json{bcolors.ENDC} file inside the {bcolors.OKBLUE}{bcolors.BOLD}Vault Directory{bcolors.ENDC}.",
+        "",
+        f"{bcolors.OKGREEN}{bcolors.BOLD}Usage Format:{bcolors.ENDC}",
+        f"  {bcolors.OKCYAN}/create{bcolors.ENDC}",
+        f"  {bcolors.PURPLE}filename{bcolors.ENDC}  {bcolors.BOLD}(extension optional){bcolors.ENDC}",
+        "",
+        f"{bcolors.WARNING}{bcolors.BOLD}Abort / Exit:{bcolors.ENDC}",
+        f"  - When prompted for a file name, type {bcolors.FAIL}/exit{bcolors.ENDC} to cancel and return to {bcolors.OKBLUE}default terminal mode{bcolors.ENDC}.",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}File Creation Rules:{bcolors.ENDC}",
+        f"  - If the Vault directory does not exist, it is auto-created before file generation.",
+        f"  - Existing file names trigger {bcolors.FAIL}Error : File Already Exists{bcolors.ENDC}.",
+        f"  - Permission issues trigger {bcolors.FAIL}Error : No Permission{bcolors.ENDC}.",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Post-Create Behavior:{bcolors.ENDC}",
+        f"  - After creation, the file automatically opens in {bcolors.OKBLUE}{bcolors.BOLD}File Mode{bcolors.ENDC}.",
+        f"  - Once inside File Mode, commands like {bcolors.OKGREEN}/add{bcolors.ENDC} and {bcolors.FAIL}/remove{bcolors.ENDC} become available.",
+]
+    
+    # Purge Command Help Page Strings
+    PurgeCommandHelpStrings = [
+        f"{bcolors.HEADER}{bcolors.BOLD}Purge Command Guide{bcolors.ENDC}",
+        "",
+        f"{bcolors.OKCYAN}/purge{bcolors.ENDC}  | Delete an existing {bcolors.PURPLE}.json{bcolors.ENDC} file from the {bcolors.OKBLUE}{bcolors.BOLD}Vault Directory{bcolors.ENDC}.",
+        "",
+        f"{bcolors.OKGREEN}{bcolors.BOLD}Usage Format :{bcolors.ENDC}",
+        f"  {bcolors.OKCYAN}/purge{bcolors.ENDC}",
+        f"  {bcolors.PURPLE}default.json{bcolors.ENDC}",
+        f"  {bcolors.OKGREEN}{bcolors.BOLD}YES{bcolors.ENDC}",
+        "",
+        f"{bcolors.WARNING}{bcolors.BOLD}Abort / Cancel:{bcolors.ENDC}",
+        f"  - Type {bcolors.FAIL}/exit{bcolors.ENDC} anytime to cancel and return to {bcolors.OKBLUE}default terminal mode{bcolors.ENDC}",
+        f"  - Any invalid input during confirmation cancels the purge process",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Validation Rules:{bcolors.ENDC}",
+        f"  - Only {bcolors.PURPLE}.json{bcolors.ENDC} files can be purged",
+        f"  - Missing Vault directory triggers {bcolors.WARNING}Error: Database folder does not exist{bcolors.ENDC}",
+        f"  - Unknown file name triggers {bcolors.FAIL}Error: Directory Not Found{bcolors.ENDC}",
+        f"  - Permission issues trigger {bcolors.FAIL}Error: No Permission{bcolors.ENDC}",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Expected System Messages:{bcolors.ENDC}",
+        f"  - Verify prompt appears before deletion confirmation",
+        f"  - Success message returns {bcolors.OKCYAN}/exit{bcolors.ENDC} access state to default after purge",
+    ]
+
+    # Notes Command Strings
+    DevNotes = [
+        f"{bcolors.HEADER}{bcolors.BOLD}Changelog — Electronics Inventory Manager{bcolors.ENDC}",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Current Update [1.5.1Dev] — 07/01/2026{bcolors.ENDC}",
+        "",
+        f"{bcolors.OKGREEN}{bcolors.BOLD}Added:{bcolors.ENDC}",
+        "- /notes command for quick access to latest changes",
+        "- CLI prompt tag updated from '@system' to actual computer username",
+        "- Mode-aware help string arrays for /open, /create, /purge",
+        "",
+        f"{bcolors.OKCYAN}{bcolors.BOLD}Refactored Framework:{bcolors.ENDC}",
+        "- main logic split into modular scripts (commands, notifications, UI, JSON processing)",
+        "- Shared state centralized in data.py",
+        "- Debug and development workflow improved",
+        "",
+        f"{bcolors.FAIL}{bcolors.BOLD}Warranty:{bcolors.ENDC}",
+        "This software is provided 'as-is' with no guarantees during development builds.",
+        "Always keep backups of your inventory files.",
+        "",
+        "© 2026 Rafail Palalakis. All rights reserved.",
+    ]
 
 
 # ACCESS TEXT (dynamic generation based on mode)
@@ -79,6 +196,7 @@ class COMMANDSLIST:
     # List of Commands
     Commands = [
         f"{bcolors.OKCYAN}/about{bcolors.ENDC}                | Displays a list of information about this software",
+        f"{bcolors.OKCYAN}/notes{bcolors.ENDC}                | Displays all the latest changes in the current version"
         f"{bcolors.OKCYAN}/commands{bcolors.ENDC}             | Displays a list of the commands available",
         f"{bcolors.OKCYAN}|- /ANYCOMMAND{bcolors.ENDC}        | Write any command to get help on how to use it",
         f"{bcolors.OKCYAN}|- /exit{bcolors.ENDC}              | Exits The Commands Display Mode\n",
@@ -100,27 +218,7 @@ class COMMANDSLIST:
         f"{bcolors.OKCYAN}|- /commands{bcolors.ENDC}           | Displays a list of the commands available",
         f"{bcolors.OKCYAN}|-- /ANYCOMMAND{bcolors.ENDC}        | Write any command to get help on how to use it",
         f"{bcolors.OKCYAN}|-- /exit{bcolors.ENDC}              | Exits The Commands Display Mode\n",
-
 ]
-
-# Logo
-class Logo:
-    HorVersion = [
-        "    ________          __                   _          ",
-        "   ╱ ____╱ ╱__  _____╱ ╱__________  ____  (_)_________",
-        "  ╱ __╱ ╱ ╱ _ ╲╱ ___╱ __╱ ___╱ __ ╲╱ __ ╲╱ ╱ ___╱ ___╱",
-        " ╱ ╱___╱ ╱  __╱ ╱__╱ ╱_╱ ╱  ╱ ╱_╱ ╱ ╱ ╱ ╱ ╱__(__  )   ",
-        "╱_____╱_╱╲___╱╲___╱╲__╱_╱   ╲____╱_╱ ╱_╱_╱╲___╱____╱  ",
-        "      ╱  _╱___ _   _____  ____  ╱ ╱_____  _______  __ ",
-        "      ╱ ╱╱ __ ╲ │ ╱ ╱ _ ╲╱ __ ╲╱ __╱ __ ╲╱ ___╱ ╱ ╱ ╱ ",
-        "    _╱ ╱╱ ╱ ╱ ╱ │╱ ╱  __╱ ╱ ╱ ╱ ╱_╱ ╱_╱ ╱ ╱  ╱ ╱_╱ ╱  ",
-        "   ╱___╱_╱ ╱_╱│___╱╲___╱_╱ ╱_╱╲__╱╲____╱_╱   ╲__, ╱   ",
-        "      ╱  │╱  ╱___ _____  ____ _____ ____  __╱____╱    ",
-        "     ╱ ╱│_╱ ╱ __ `╱ __ ╲╱ __ `╱ __ `╱ _ ╲╱ ___╱       ",
-        "    ╱ ╱  ╱ ╱ ╱_╱ ╱ ╱ ╱ ╱ ╱_╱ ╱ ╱_╱ ╱  __╱ ╱           ",
-        "   ╱_╱  ╱_╱╲__,_╱_╱ ╱_╱╲__,_╱╲__, ╱╲___╱_╱            ",
-        "                            ╱____╱                    ",
-    ]
 
 
 @dataclass
@@ -160,9 +258,6 @@ def component_to_dict(comp: Component) -> dict:
     }
     
     return d
-
-
-# ======
 
 # Frequently Accessible Functions
 def set_filename(filename):

@@ -1,4 +1,8 @@
+import os
 import json
+
+from data import Info
+from notifications import NotificationCall
 
 # Routine Processes
 
@@ -17,7 +21,19 @@ def save_process(file_path, file_data):
         json.dump(file_data, file, indent=4)
 
 
+# Databases Folder Initiate
+def create_default_database():
+    if not os.path.exists(Info.folder_path):
+        os.makedirs(Info.folder_path)
+        MsgMode = "notice-default-database-created"
+
 # Mode Processes
+
+# Create Default Parameters For .json File
+def create_json_parameters(file_path):
+    with open(file_path, 'w') as json_file:
+            json.dump([], json_file)
+
 
 # Write/Add Object To .json File
 def write_json(push, file_path):
