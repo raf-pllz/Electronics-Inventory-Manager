@@ -72,7 +72,7 @@ Objects are stored as structured JSON entries and managed interactively through 
 
 ## Requirements
 
-* Python 3.x
+* Python 3.13.5 (might work with older versions, but the specified version is guaranteed)
 * A terminal that supports ANSI escape sequences (most modern terminals do)
 
 No external libraries are required (as of now).
