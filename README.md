@@ -110,8 +110,8 @@ When launched, the application displays a welcome screen and a list of basic com
 
 ## Version Information
 
-* **Latest Development Version:** 1.5.1Dev
-* **Development Version Release Date:** 07/01/2026
+* **Latest Development Version:** 1.6Dev
+* **Development Version Release Date:** 13/01/2026
 * **Latest User-Ready Version:** NONE
 * **User-Ready Version Release Date:** NOT YET RELEASED
 
