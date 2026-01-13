@@ -6,6 +6,26 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
+## [1.6Dev] - 13/01/2026
+
+### Planned Features
+- **Item version compatibility checker**
+  - Each inventory object will store a version identifier.
+  - Prevents silent data loss or corruption when opening databases created with different software versions.
+- **Stricter input validation**
+  - Enforced validation rules for object **Names** and **IDs** during creation and modification.
+  - Invalid or malformed identifiers will be rejected early.
+- **Object inspection command**
+  - New `/view` command to display detailed object information.
+  - Supports lookup by **Name** or **Object ID**.
+- **General stability pass**
+  - Bug fixes discovered during normal usage.
+  - Incremental improvements to existing infrastructure where feasible.
+
+### Notes
+- This update focuses on **data safety**, **validation**, and **developer maintainability**.
+
+---
 
 ## [1.5.1Dev] – 07/01/2026
 
