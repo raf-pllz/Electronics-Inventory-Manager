@@ -154,4 +154,4 @@ The project is currently in active development and uses a development-based vers
 
 ---
 
-© 2025 Rafail Palalakis. All rights reserved.
+© 2026 Rafail Palalakis. All rights reserved.
