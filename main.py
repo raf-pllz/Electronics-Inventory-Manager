@@ -1,18 +1,14 @@
-import os
-import json
-
-
-from data import Info, bcolors, ACCTEXT
+from data import Info, ACCTEXT
 from jsonprocess import create_default_database
 from notifications import NotificationCall
-from CLIUI import LineUI, welcome_message
+from CLIUI import welcome_message
 from commands import GetCommand, AboutCommand, HelpCommand, ComCom, OpenCommand, CreateCommand, PurgeCommand, ReleaseNotes
 
 
 # Launch Process
 def StartManager():
     create_default_database()
-    welcome_message()
+    welcome_message(Info.VERSION)
 
 
 # Main Function

@@ -2,7 +2,6 @@ import os
 import json
 
 from data import Info
-from notifications import NotificationCall
 
 # Routine Processes
 
@@ -44,8 +43,28 @@ def write_json(push, file_path):
     save_process(file_path, file_data)
 
 
-# Remode/Delete Object From .json File
+# Remove/Delete Object From .json File
 def remove_json(file_path, search_value, search_mode):
+    exists = validate_name_id_json(file_path, search_value, search_mode)
+
+    if not exists:
+        return -1
+
+    # Load file and remove object
+    file_data = load_process(file_path)
+
+    updated_data = [
+        obj for obj in file_data
+        if str(obj.get("obj_id") if search_mode == "id" else obj.get("obj_name")) != str(search_value)
+    ]
+
+    save_process(file_path, updated_data)
+    return 0  # success
+
+
+
+# Fetch data and return it
+def view_json(file_path, search_value, search_mode):
     key_map = {
         "id": "obj_id",
         "name": "obj_name"
@@ -53,15 +72,31 @@ def remove_json(file_path, search_value, search_mode):
 
     json_key = key_map.get(search_mode)
     if not json_key:
-        return -1  # invalid Search Term
+        return 0
 
     file_data = load_process(file_path)
 
-    updated_data = [
-        obj for obj in file_data
-        if obj.get(json_key) != search_value
-    ]
+    for obj in file_data:
+        if obj.get(json_key) == search_value:
+            return obj
 
-    save_process(file_path, updated_data)
-    
-    return 0  # Successful Deletion
+    return 0
+
+
+# Validate Name/ID availability
+def validate_name_id_json(file_path, search_value, search_mode):
+    key_map = {
+        "id": "obj_id",
+        "name": "obj_name"
+    }
+
+    json_key = key_map[search_mode]  # safe: always correct
+    file_data = load_process(file_path)
+
+    search_value = str(search_value).strip()
+
+    return any(
+        str(obj.get(json_key)) == search_value
+        for obj in file_data
+        if isinstance(obj, dict)
+    )

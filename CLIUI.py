@@ -1,5 +1,3 @@
-from data import bcolors, Info
-
 # Standard UI Line Draw
 def LineUI():
     print("=" * 70)
@@ -12,12 +10,11 @@ def LogoDraw():
 
 
 # Welcome Message
-def welcome_message():
+def welcome_message(Version):
     LineUI()
     print("Welcome To Creative Tools - Electronics Inventory Manager")
-    print(f'Developed By Rafail Palalakis, Version : {bcolors.PURPLE}{Info.VERSION}{bcolors.ENDC}')
+    print(f'Developed By Rafail Palalakis, Version : {bcolors.PURPLE}{Version}{bcolors.ENDC}')
     print("To Get Started Try One Of These Commands Below:")
-    LineUI()
 
 
 # UI Data
@@ -38,3 +35,16 @@ class Logo:
         "   ╱_╱  ╱_╱╲__,_╱_╱ ╱_╱╲__,_╱╲__, ╱╲___╱_╱            ",
         "                            ╱____╱                    ",
     ]
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    PURPLE = '\033[0;35m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'

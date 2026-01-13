@@ -1,26 +1,15 @@
 import getpass
 
 from dataclasses import dataclass
-    
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    PURPLE = '\033[0;35m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+from CLIUI import bcolors
 
 
 # Defaults
 class Info:
     CurrentPage = 1
     folder_path = "./Databases"
-    VERSION = "1.5.1Dev"
-    DATE = "07/1/2026 (1st Commit Of The Day)"
+    VERSION = "1.6Dev"
+    DATE = "13/01/2026 (1st Commit Of The Day)"
     ACCESSNAME = getpass.getuser()
     ACCESS = f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{ACCESSNAME}){bcolors.ENDC} -> "
     CurrentPage = 1
@@ -121,20 +110,28 @@ class Info:
 
     # Notes Command Strings
     DevNotes = [
-        f"{bcolors.HEADER}{bcolors.BOLD}Changelog — Electronics Inventory Manager{bcolors.ENDC}",
+        f"{bcolors.HEADER}{bcolors.BOLD}Version 1.6Dev — 13/01/2026{bcolors.ENDC}",
         "",
-        f"{bcolors.PURPLE}{bcolors.BOLD}Current Update [1.5.1Dev] — 07/01/2026{bcolors.ENDC}",
+        f"{bcolors.OKGREEN}{bcolors.BOLD}Planned Features:{bcolors.ENDC}",
+        f"- {bcolors.OKCYAN}Item version compatibility checker{bcolors.ENDC}",
+        "  Each inventory object will store a version identifier.",
+        "  Prevents silent data loss or corruption when opening databases created with different software versions.",
         "",
-        f"{bcolors.OKGREEN}{bcolors.BOLD}Added:{bcolors.ENDC}",
-        "- /notes command for quick access to latest changes",
-        "- CLI prompt tag updated from '@system' to actual computer username",
-        "- Mode-aware help string arrays for /open, /create, /purge",
+        f"- {bcolors.WARNING}Stricter input validation{bcolors.ENDC}",
+        "  Enforced validation rules for object Names and IDs during creation and modification.",
+        "  Invalid or malformed identifiers will be rejected early.",
         "",
-        f"{bcolors.OKCYAN}{bcolors.BOLD}Refactored Framework:{bcolors.ENDC}",
-        "- main logic split into modular scripts (commands, notifications, UI, JSON processing)",
-        "- Shared state centralized in data.py",
-        "- Debug and development workflow improved",
+        f"- {bcolors.OKBLUE}/view{bcolors.ENDC} command for object inspection",
+        "  Displays detailed object information.",
+        "  Supports lookup via Name or Object ID.",
         "",
+        f"- {bcolors.OKGREEN}General stability pass{bcolors.ENDC}",
+        "  Bug fixes discovered during normal usage.",
+        "  Incremental improvements to existing infrastructure where feasible.",
+        "",
+        f"{bcolors.PURPLE}{bcolors.BOLD}Notes:{bcolors.ENDC}",
+        "This update prioritizes data safety, validation, and developer maintainability.",
+        ""
         f"{bcolors.FAIL}{bcolors.BOLD}Warranty:{bcolors.ENDC}",
         "This software is provided 'as-is' with no guarantees during development builds.",
         "Always keep backups of your inventory files.",
@@ -162,6 +159,8 @@ class ACCTEXT:
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{Info.ACCESSNAME}{bcolors.ENDC}{bcolors.FAIL}>Purge{bcolors.ENDC}{bcolors.BOLD}){bcolors.ENDC} -> "
         elif mode == "filedelete":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.FAIL}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Purge{bcolors.ENDC}) -> "
+        elif mode == "view":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>View{bcolors.ENDC}) -> "
         
         elif mode == "mode-com":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>Commands{bcolors.ENDC}) -> "
@@ -185,6 +184,14 @@ class ACCTEXT:
         # Mode : Remove/Delete Object From .json File (With NAME)
         elif mode == "remove-name":
             return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.FAIL}>Remove>Name{bcolors.ENDC}) -> "
+        
+        # Mode : View Object
+        elif mode == "view-obj":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>View>{bcolors.ENDC}) -> "
+        elif mode == "view-obj-name":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>View>Name>{bcolors.ENDC}) -> "
+        elif mode == "view-obj-id":
+            return f"({bcolors.OKBLUE}@{bcolors.ENDC}{bcolors.BOLD}{bcolors.OKGREEN}{filename}{bcolors.ENDC}{bcolors.OKGREEN}>View>ID>{bcolors.ENDC}) -> "
         
         # Default Handling
         else:
@@ -221,12 +228,22 @@ class COMMANDSLIST:
 ]
 
 
+LABELS = {
+    "obj_name" : f"{bcolors.PURPLE}Name{bcolors.ENDC}",
+    "obj_id" : f"{bcolors.PURPLE}ID{bcolors.ENDC}",
+    "obj_description": f"{bcolors.OKCYAN}Description{bcolors.ENDC}",
+    "obj_stock": f"{bcolors.OKGREEN}Stock{bcolors.ENDC}",
+    "obj_version": f"{bcolors.WARNING}Item Created In Version {bcolors.FAIL}(Compability){bcolors.ENDC}",
+}
+
+
 @dataclass
 class Component:
     name: str
     description: str
     stock: int
     id : int
+    version : str
 
 
 # Function to set ObjName
@@ -249,12 +266,18 @@ def set_ObjID(comp : Component, ObjID):
     comp.id = ObjID
 
 
+# Function to set ObjVersion
+def set_ObjVersion(comp : Component, ObjVersion):
+    comp.version = ObjVersion
+
+
 def component_to_dict(comp: Component) -> dict:
     d = {
         "obj_name": comp.name,
         "obj_description": comp.description,
         "obj_stock": comp.stock,  
         "obj_id": comp.id,
+        "obj_version": comp.version,
     }
     
     return d

@@ -1,8 +1,8 @@
 import os
 
-from data import Info, bcolors, ACCTEXT, COMMANDSLIST, set_ObjName, set_ObjDescription, set_ObjStock, set_ObjID, Component, component_to_dict , set_filename
-from CLIUI import LogoDraw, LineUI
-from jsonprocess import write_json, remove_json, create_json_parameters
+from data import Info, ACCTEXT, COMMANDSLIST, set_ObjName, set_ObjDescription, set_ObjStock, set_ObjID, set_ObjVersion, Component, component_to_dict , set_filename, LABELS
+from CLIUI import LogoDraw, LineUI, bcolors
+from jsonprocess import write_json, remove_json, create_json_parameters, view_json, validate_name_id_json
 from notifications import NotificationCall, GetCorrectValue, GetDirectory
 
 
@@ -134,22 +134,39 @@ def FileMode(CurrentPage, file_path):
         if command == "/exit":
             break
 
+
         elif command == "/commands":
             Info.ACCESS = ACCTEXT.get_access_text("mode-com", Info.FileName)
             ComCom(CurrentPage)
             Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
 
-        elif command == "/add":
-            # Default comp
-            comp = Component('','',0,0)
 
-            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the name of the object you want to create : ')
+        elif command == "/add":
+            comp = Component('', '', 0, 0, '')
+
+            # Set Object Name
+            search_mode = "name"
             Info.ACCESS = ACCTEXT.get_access_text("add-name", Info.FileName)
-            ObjName = input(f'{Info.ACCESS}')
-            set_ObjName(comp, ObjName)
-            if ObjName == "/exit":
-                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+
+            while True:
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the name of the object you want to create : ')
+                ObjName = input(f'{Info.ACCESS}')
+
+                if ObjName == "/exit":
+                    Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                    break
+
+                exists = validate_name_id_json(file_path, ObjName, search_mode)
+
+                if exists:
+                    NotificationCall("error-item-name-already-exists", ObjName)
+                    continue
+
+
+                set_ObjName(comp, ObjName)
                 break
+
+            
 
             # Set Object Description
             print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the description of the object {bcolors.OKGREEN}{ObjName}{bcolors.ENDC} you want to create : ')
@@ -175,19 +192,15 @@ def FileMode(CurrentPage, file_path):
                     ObjStock = int(stock_input)
 
                     if ObjStock < 0:
-                        correctvalue = "be greater or equal to 0"
-                        MsgMode = "error-invalid-value"
-                        GetCorrectValue(correctvalue)
-                        NotificationCall(MsgMode, Info.FileName)
+                        GetCorrectValue("be greater or equal to 0")
+                        NotificationCall("error-invalid-value", Info.FileName)
                         continue
 
                     break
 
                 except ValueError:
-                    correctvalue = "be an integer"
-                    MsgMode = "error-invalid-value"
-                    GetCorrectValue(correctvalue)
-                    NotificationCall(MsgMode, Info.FileName)
+                    GetCorrectValue("be an integer")
+                    NotificationCall("error-invalid-value", Info.FileName)
                     continue
 
 
@@ -196,37 +209,56 @@ def FileMode(CurrentPage, file_path):
 
 
             # Set Object ID
-            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the ID of the object {bcolors.OKGREEN}{ObjName}{bcolors.ENDC} you want to create : ')
             Info.ACCESS = ACCTEXT.get_access_text("add-id", Info.FileName)
-            ObjID = input(f'{Info.ACCESS}')
-            if ObjID == "/exit":
-                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+
+            while True:
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the ID of the object {bcolors.OKGREEN}{ObjName}{bcolors.ENDC} you want to create : ')
+                ObjID = input(f'{Info.ACCESS}')
+
+                if ObjID == "/exit":
+                    Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                    break  # exit /add cleanly
+
+                # Check if ID already exists
+                search_mode = "id"
+                exists = validate_name_id_json(file_path, ObjID, search_mode)
+
+                if exists:
+                    NotificationCall("error-item-id-already-exists", ObjID)
+                    continue  # ask again
+
+                # ID is valid and unique
+                set_ObjID(comp, ObjID)
                 break
 
-            set_ObjID(comp, ObjID)
 
+            # Set Object Version (Automatic)
+            ObjVersion = Info.VERSION
+
+            set_ObjVersion(comp, ObjVersion)
+
+
+            # Final Push
             push = component_to_dict(comp)
 
             write_json(push, file_path)
             
-            MsgMode = "success-obj-add"
             GetDirectory(Info.FileName)
-            NotificationCall(MsgMode, ObjID)
+            NotificationCall("success-obj-add", ObjID)
 
             Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
 
-        # Command /remove
+
         elif command == "/remove":
             
             print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the way you want to identify the object you wish to {bcolors.FAIL}remove/delete{bcolors.ENDC} (either by {bcolors.PURPLE}/id{bcolors.ENDC} or {bcolors.PURPLE}/name{bcolors.ENDC}) : ')
             Info.ACCESS = ACCTEXT.get_access_text("remove", Info.FileName)
-            GetCommand()
+            command = GetCommand()
 
             # Answer Checking
             while command != "/exit" and command != "/id" and command != "/name":
-                correctvalue = "/exit || /id || /name"
-                MsgMode = "error-invalid-value"
-                NotificationCall(MsgMode, Info.FileName)
+                GetCorrectValue("/exit || /id || /name")
+                NotificationCall("error-invalid-value",Info.FileName)
 
                 command = GetCommand()
   
@@ -239,54 +271,133 @@ def FileMode(CurrentPage, file_path):
                 search_mode = "id"
 
                 print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}ID{bcolors.ENDC} of the object you want to {bcolors.FAIL}remove/delete{bcolors.ENDC} : ')
-                Info.ACCESS = ACCTEXT.get_access_text("remove-id", Info.FileName)
+                Info.ACCESS = ACCTEXT.get_access_text(f"remove-{search_mode}", Info.FileName)
+
                 while True:
-                    command = GetCommand()
-
-                    search_key = command
-
-                    result = remove_json(file_path, search_key, search_mode)
-
-                    if result == -1:
-                        MsgMode = "error-invalid-obj"
-                        NotificationCall(MsgMode, search_key)
-                        GetCommand()
-                        search_key = command
-
-                    elif result == 0:
-                        MsgMode = "success-obj-remove"
-                        GetDirectory(Info.FileName)
-                        NotificationCall(MsgMode, ObjID)
+                    search_key = GetCommand()
+                    if search_key == "/exit":
+                        Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
                         break
+
+                    exists = validate_name_id_json(file_path, search_key, search_mode)
+                    if not exists:
+                        NotificationCall("error-invalid-obj", search_key)
+                        continue
+
+                    remove_json(file_path, search_key, search_mode)
+                    GetDirectory(Info.FileName)
+                    NotificationCall("success-obj-remove", search_key)
+                    break
+
 
 
             # Name Case
             elif command == "/name":
                 search_mode = "name"
 
-                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}NAME{bcolors.ENDC} of the object you want to {bcolors.FAIL}remove/delete{bcolors.ENDC} : ')
-                Info.ACCESS = ACCTEXT.get_access_text("remove-name", Info.FileName)
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}ID{bcolors.ENDC} of the object you want to {bcolors.FAIL}remove/delete{bcolors.ENDC} : ')
+                Info.ACCESS = ACCTEXT.get_access_text(f"remove-{search_mode}", Info.FileName)
+
+                while True:
+                    search_key = GetCommand()
+                    if search_key == "/exit":
+                        Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                        break
+
+                    exists = validate_name_id_json(file_path, search_key, search_mode)
+                    if not exists:
+                        NotificationCall("error-invalid-obj", search_key)
+                        continue
+
+                    remove_json(file_path, search_key, search_mode)
+                    GetDirectory(Info.FileName)
+                    NotificationCall("success-obj-remove", search_key)
+                    break
+
+            Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+        
+
+        elif command == "/view":
+            print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the way you want to identify the object you wish to {bcolors.PURPLE}view{bcolors.ENDC} (either by {bcolors.PURPLE}/id{bcolors.ENDC} or {bcolors.PURPLE}/name{bcolors.ENDC}) : ')
+            Info.ACCESS = ACCTEXT.get_access_text("view-obj", Info.FileName)
+            command = GetCommand()
+
+            # Answer Checking
+            while command != "/exit" and command != "/id" and command != "/name":
+                correctvalue = "/exit || /id || /name"
+                MsgMode = "error-invalid-value"
+                GetCorrectValue(correctvalue)
+                NotificationCall(MsgMode,Info.FileName)
+
+                command = GetCommand()
+  
+            # Exit Case
+            if command == "/exit":
+                Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
+                break
+
+
+            # ID Case
+            elif command == "/id":
+                search_mode = "id"
+
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}ID{bcolors.ENDC} of the object you want to {bcolors.PURPLE}view{bcolors.ENDC} : ')
+                Info.ACCESS = ACCTEXT.get_access_text("view-obj-id", Info.FileName)
                 while True:
                     command = GetCommand()
 
                     search_key = command
 
-                    result = remove_json(file_path, search_key, search_mode)
+                    result = view_json(file_path, search_key, search_mode)
 
                     if result == -1:
                         MsgMode = "error-invalid-obj"
                         NotificationCall(MsgMode, search_key)
                         GetCommand()
                         search_key = command
+                        break
 
-                    elif result == 0:
-                        MsgMode = "success-obj-remove"
-                        GetDirectory(Info.FileName)
-                        NotificationCall(MsgMode, ObjID)
+                    else:
+                        LineUI()
+                        for key, label in LABELS.items():
+                            if key in result:
+                                print(f"{label}: {result[key]}")
+                        LineUI()
+                        break
+
+            # Name Case
+            elif command == "/name":
+                search_mode = "name"
+
+                print(f'{bcolors.OKGREEN}{bcolors.BOLD}Enter{bcolors.ENDC} the {bcolors.BOLD}Name{bcolors.ENDC} of the object you want to {bcolors.PURPLE}view{bcolors.ENDC} : ')
+                Info.ACCESS = ACCTEXT.get_access_text("view-obj-name", Info.FileName)
+                while True:
+                    command = GetCommand()
+
+                    search_key = command
+
+                    result = view_json(file_path, search_key, search_mode)
+
+                    if result == -1:
+                        MsgMode = "error-invalid-obj"
+                        NotificationCall(MsgMode, search_key)
+                        GetCommand()
+                        search_key = command
+                        break
+
+                    else:
+                        LineUI()
+                        for key, label in LABELS.items():
+                            if key in result:
+                                print(f"{label}: {result[key]}")
+                                if key == "obj_version" and result[key] != Info.VERSION:
+                                    MsgMode = "notice-obj-version"
+                                    NotificationCall(MsgMode, search_key)
+                        LineUI()
                         break
 
             Info.ACCESS = ACCTEXT.get_access_text("file", Info.FileName)
-        
+
 
         else:
             MsgMode = "error-unknown-command"
@@ -436,6 +547,78 @@ def PurgeCommand():
         return
 
     Info.ACCESS = ACCTEXT.get_access_text("filedelete", Info.FileName)
+    MsgMode = "verify-command"
+    NotificationCall(MsgMode, Info.FileName)
+
+    command = GetCommand()
+    if command == "YES":
+        try:
+            os.remove(file_path)
+            
+            MsgMode = "success-file-purge"
+            NotificationCall(MsgMode, Info.FileName)
+
+            Info.ACCESS = ACCTEXT.get_access_text("default")
+
+            return
+        
+        except PermissionError:
+            MsgMode = "error-no-permission"
+            NotificationCall(MsgMode, Info.FileName)
+    else:
+        MsgMode = "notice-purge-canceled"
+        NotificationCall(MsgMode, Info.FileName)
+
+    while True:
+        command = GetCommand()
+        if command == "/exit":
+            break
+        else:
+            MsgMode = "verify-command"
+            NotificationCall(MsgMode, Info.FileName)
+
+    Info.ACCESS = ACCTEXT.get_access_text("default")
+
+
+# Vies Command
+def ViewCommand():
+    Info.ACCESS = ACCTEXT.get_access_text("view")
+
+    command = GetCommand()
+
+    if command == "/exit":
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    set_filename(command)
+
+    file_path = os.path.join(Info.folder_path, command)
+
+    if not os.path.exists(Info.folder_path):
+        MsgMode = "error-database-not-found"
+        NotificationCall(MsgMode, Info.FileName)
+
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    if not os.path.exists(file_path):
+        MsgMode = "error-directory-not-found"
+        NotificationCall(MsgMode, Info.FileName)
+
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    Info.FileName, FileExtension = os.path.splitext(command)
+    set_filename(Info.FileName)
+
+    if FileExtension != ".json":
+        MsgMode = "error-no-permission"
+        NotificationCall(MsgMode, Info.FileName)
+
+        Info.ACCESS = ACCTEXT.get_access_text("default")
+        return
+
+    Info.ACCESS = ACCTEXT.get_access_text("view", Info.FileName)
     MsgMode = "verify-command"
     NotificationCall(MsgMode, Info.FileName)
 
