@@ -1,9 +1,10 @@
+# ⚠️ WARNING : This specific branch will not be updated beyond ```VERSION 1.7Dev``` unless there's a critical security update 
 # Creative Tools – Electronics Inventory Manager
 
 A terminal-based Electronics Inventory Manager written in Python.  
 The project provides an interactive CLI for creating, opening, and managing JSON-based inventory files, with support for adding and removing electronic components through structured command modes.
 
-This repository currently represents a **development-stage build** and serves as the foundation for a more complete inventory management system.
+This branch currently represents a **development-stage build** in **Major Series 1 (Version 1.X)** and serves as the foundation for a more complete inventory management system.
 
 ---
 
